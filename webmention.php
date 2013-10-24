@@ -182,7 +182,6 @@ class WebMentionPlugin {
 
     return false;
   }
-  add_action('send_webmention',10,2);
   
   /**
    * The webmention autodicovery meta-tags
@@ -303,3 +302,5 @@ add_action('wp_head', array('WebMentionPlugin', 'html_header'), 99);
 add_action('send_headers', array('WebMentionPlugin', 'http_header'));
 
 add_action('publish_post', array('WebMentionPlugin', 'publish_post_hook'));
+
+add_action('send_webmention', array('WebMentionPlugin', 'send_ping'),10,2);
