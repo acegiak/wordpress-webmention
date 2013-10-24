@@ -28,15 +28,15 @@ class WebMentionPlugin {
   }
 
   /**
-   * Parse the webfinger request and render the document.
+   * Parse the webmention request and render the document.
    *
    * @param WP $wp WordPress request context
    *
-   * @uses apply_filters() Calls 'webfinger' on webfinger data array
-   * @uses do_action() Calls 'webfinger_render' to render webfinger data
+   * @uses apply_filters() Calls 'webmention' on webmention data array
+   * @uses do_action() Calls 'webmention_render' to render webmention data
    */
   public static function parse_query($wp) {
-    // check if it is a webfinger request or not
+    // check if it is a webmention request or not
     if (!array_key_exists('webmention', $wp->query_vars)) {
       return;
     }
@@ -182,7 +182,8 @@ class WebMentionPlugin {
 
     return false;
   }
-
+  add_action('send_webmention',10,2);
+  
   /**
    * The webmention autodicovery meta-tags
    */
@@ -284,12 +285,9 @@ class WebMentionPlugin {
     $contents = wp_remote_retrieve_body( $response );
 
     // check html meta-links
-    if (preg_match('/<link\s+href=[\"\']([^"\']+)[\"\']\s+rel=[\"\']webmention[\"\']\s*\/?>/i', $contents, $result)
-        || preg_match('/<link\s+rel=[\"\']webmention[\"\']\s+href=[\"\']([^\"\']+)[\"\']\s*\/?>/i', $contents, $result)) {
-      return $result[1];
-    } elseif(preg_match('/<link\s+href=[\"\']([^\"\']+)[\"\']\s+rel=[\"\']http:\/\/webmention\.org\/?[\"\']\s*\/?>/i', $contents, $result)
-        || preg_match('/<link\s+rel=[\"\']http:\/\/webmention\.org\/?[\"\']\s+href=[\"\']([^\"\']+)[\"\']\s*\/?>/i', $contents, $result)) {
-      return $result[1];
+    if(preg_match('/<link[ ]+href="([^"]+)"[ ]+rel=".*?webmention.*?"[ ]*\/?>/i', $contents, $match)
+        || preg_match('/<link[ ]+rel=".*?webmention.*?"[ ]+href="([^"]+)"[ ]*\/?>/i', $contents, $match)) {
+      return $match[1];
     }
 
     return false;
